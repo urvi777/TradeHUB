@@ -14,6 +14,8 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import NotFound from "./pages/NotFound";
 import SplashPage from "./pages/SplashPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import LoginPage from "./pages/LoginPage";
+import SignupPage from "./pages/SignupPage";
 import BottomNav from "./components/BottomNav";
 import { useState, useEffect } from "react";
 
@@ -27,27 +29,45 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => (
 );
 
 const App = () => {
-  const [stage, setStage] = useState<'splash' | 'onboarding' | 'main'>('splash');
+  const [stage, setStage] = useState<'splash' | 'onboarding' | 'login' | 'signup' | 'main'>('splash');
 
   useEffect(() => {
     const hasOnboarded = localStorage.getItem('hasOnboarded');
-    if (hasOnboarded) {
-      setStage('main'); // skip onboarding if done, but splash logic handles delay
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (hasOnboarded && isLoggedIn) {
+      setStage('main'); // skip onboarding and login if done, but splash logic handles delay
     }
   }, []);
 
   if (stage === 'splash') {
     return <SplashPage onComplete={() => {
       const hasOnboarded = localStorage.getItem('hasOnboarded');
-      setStage(hasOnboarded ? 'main' : 'onboarding');
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      if (!hasOnboarded) setStage('onboarding');
+      else if (!isLoggedIn) setStage('login');
+      else setStage('main');
     }} />;
   }
 
   if (stage === 'onboarding') {
     return <OnboardingPage onComplete={() => {
       localStorage.setItem('hasOnboarded', 'true');
-      setStage('main');
+      setStage('login');
     }} />;
+  }
+
+  if (stage === 'login') {
+    return <LoginPage 
+      onComplete={() => setStage('main')} 
+      onSignupClick={() => setStage('signup')} 
+    />;
+  }
+
+  if (stage === 'signup') {
+    return <SignupPage 
+      onComplete={() => setStage('main')} 
+      onLoginClick={() => setStage('login')} 
+    />;
   }
 
   return (

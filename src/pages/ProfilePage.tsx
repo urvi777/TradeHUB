@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings, ShieldCheck, Package, Heart, Star, ChevronRight, MapPin, Clock, Plus, LogOut, Edit3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +8,10 @@ import StarRating from "@/components/StarRating";
 import ProductCard from "@/components/ProductCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const statusColors = {
   pending: "bg-warning/10 text-warning",
@@ -21,6 +25,31 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const savedProducts = products.filter(p => p.saved);
   const myListings = products.filter(p => p.seller.id === currentUser.id);
+
+  const [userName, setUserName] = useState(currentUser.name);
+  const [editName, setEditName] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem('username');
+    if (storedName) {
+      const formattedName = storedName.includes('@') ? storedName.split('@')[0] : storedName;
+      setUserName(formattedName);
+      setEditName(formattedName);
+    } else {
+      setEditName(currentUser.name);
+    }
+  }, []);
+
+  const handleSaveProfile = () => {
+    if (editName.trim()) {
+      const newName = editName.trim();
+      localStorage.setItem('username', newName);
+      const formattedName = newName.includes('@') ? newName.split('@')[0] : newName;
+      setUserName(formattedName);
+      setIsEditDialogOpen(false);
+    }
+  };
 
   return (
     <div className="pb-20">
@@ -48,13 +77,38 @@ const ProfilePage = () => {
                 </div>
               )}
             </div>
-            <button className="bg-primary/10 hover:bg-primary/20 text-primary transition-colors px-4 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1.5 backdrop-blur-md">
-              <Edit3 className="w-4 h-4" /> Edit Profile
-            </button>
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogTrigger asChild>
+                <button className="bg-primary/10 hover:bg-primary/20 text-primary transition-colors px-4 py-1.5 rounded-full text-sm font-semibold flex items-center gap-1.5 backdrop-blur-md">
+                  <Edit3 className="w-4 h-4" /> Edit Profile
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Edit Profile</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Username
+                    </Label>
+                    <Input
+                      id="name"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="col-span-3"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={handleSaveProfile} type="submit">Save changes</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
           
           <div>
-            <h2 className="text-2xl font-bold tracking-tight">{currentUser.name}</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{userName}</h2>
             <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
               <StarRating rating={Math.round(currentUser.rating)} size={14} />
               <span className="font-medium text-foreground">{currentUser.rating}</span>
