@@ -1,6 +1,6 @@
 # TradeHub 🛒
 
-TradeHub is a sleek, premium peer-to-peer marketplace application built with **React, Vite, and Tailwind CSS**. It features a modern, mobile-first design that allows users to discover, buy, and sell pre-loved local premium products seamlessly.
+TradeHub is a sleek, premium peer-to-peer marketplace mobile application built with **React Native and Expo**. It features a modern, mobile-first design that allows users to discover, buy, and sell pre-loved local premium products seamlessly.
 
 ## ✨ Features
 - **🚀 Immersive Onboarding:** A visually stunning animated splash screen that transitions into an intuitive, interactive onboarding flow.
@@ -59,11 +59,11 @@ Here is a look at the application in action:
 <br/>
 
 ## 🛠️ Tech Stack
-- **Frontend Framework**: React + Vite
-- **Styling**: Tailwind CSS & Framer Motion
-- **UI Components**: Radix UI Primitives & Lucide Icons
-- **State Management**: React Context API
-- **Routing**: React Router v6
+- **App Framework**: React Native + Expo
+- **Styling**: React Native StyleSheet & Reanimated
+- **UI Components**: Native Containers & Lucide React Native
+- **State Management**: React Context API & AsyncStorage
+- **Routing**: Expo Router
 
 ---
 *Created with ❤️ by Urvi Patel*
